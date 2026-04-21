@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { type Product } from "@/lib/store";
 
 export default function DashboardPage() {
   const { data: products, isLoading } = useQuery({
@@ -19,9 +20,9 @@ export default function DashboardPage() {
   });
 
   const totalProducts = products?.length || 0;
-  const totalValue = products?.reduce((sum: number, p: any) => sum + (p.price * p.stock), 0) || 0;
-  const lowStock = products?.filter((p: any) => p.stock > 0 && p.stock < 10).length || 0;
-  const outOfStock = products?.filter((p: any) => p.stock === 0).length || 0;
+  const totalValue = products?.reduce((sum: number, p: Product) => sum + (p.price * p.stock), 0) || 0;
+  const lowStock = products?.filter((p: Product) => p.stock > 0 && p.stock < 10).length || 0;
+  const outOfStock = products?.filter((p: Product) => p.stock === 0).length || 0;
   
   const recentProducts = products ? [...products].slice(0, 5) : [];
 
@@ -142,7 +143,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="divide-y divide-slate-50">
-                {recentProducts.map((product: any) => (
+                {recentProducts.map((product: Product) => (
                   <div key={product.id} className="flex items-center justify-between p-6 hover:bg-slate-50/50 transition-all group">
                     <div className="flex items-center space-x-4">
                       <div className="size-12 rounded-2xl bg-white shadow-lg shadow-slate-100 border border-slate-100 flex items-center justify-center group-hover:scale-110 transition-transform">

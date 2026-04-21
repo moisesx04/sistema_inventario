@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Package } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function DashboardLayout({
   children,

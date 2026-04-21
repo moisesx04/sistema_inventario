@@ -69,10 +69,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(product, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[POST /api/products] Full Error:", error);
     return NextResponse.json(
-      { error: error.message || "Error al crear el producto" },
+      { error: error instanceof Error ? error.message : "Error al crear el producto" },
       { status: 500 }
     );
   }

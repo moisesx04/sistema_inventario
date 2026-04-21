@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2, Package, MoreHorizontal } from "lucide-react";
+import { Edit2, Trash2, Package, Activity } from "lucide-react";
 import { useInventoryStore, type Product } from "@/lib/store";
 import { useDebounce } from "@/lib/hooks/use-debounce";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 function StockBadge({ stock }: { stock: number }) {

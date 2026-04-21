@@ -20,13 +20,14 @@ export async function POST() {
       message: "Base de datos sincronizada con éxito",
       output,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error en sincronización:", error);
+    const err = error as { message?: string; stderr?: string };
     return NextResponse.json(
       { 
         error: "Fallo la sincronización", 
-        details: error.message,
-        stderr: error.stderr 
+        details: err.message || String(error),
+        stderr: err.stderr 
       },
       { status: 500 }
     );
