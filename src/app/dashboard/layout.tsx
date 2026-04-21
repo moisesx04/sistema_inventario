@@ -26,9 +26,13 @@ export default function DashboardLayout({
         
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <div 
+              role="button"
+              tabIndex={0}
+              className="md:hidden flex items-center justify-center size-8 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors"
+            >
               <Menu className="h-6 w-6 text-slate-600" />
-            </Button>
+            </div>
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-72 bg-slate-900 border-none">
             <SheetHeader className="sr-only">
