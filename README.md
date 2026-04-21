@@ -1,36 +1,36 @@
-# 📦 Inventario Pro - Gestión de Almacén Inteligente
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Vue](https://img.shields.io/badge/Vue.js-3.x-green.svg)
-![Vercel](https://img.shields.io/badge/deploy-vercel-black.svg)
+## Getting Started
 
-Una aplicación de gestión de inventario moderna, ligera y responsiva diseñada para ofrecer una experiencia premium con un rendimiento excepcional.
+First, run the development server:
 
-## ✨ Características
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
--   **Dashboard Inteligente**: Visualiza stock total, productos bajos y valor de inventario al instante.
--   **Gestión por Categorías**: Análisis detallado de mercancía agrupada por categorías.
--   **Exportación de Datos**: Descarga tu inventario completo en formato CSV para Excel.
--   **Alertas de Stock**: Indicadores visuales para productos que requieren reposición.
--   **Modo Oscuro/Claro**: Diseño premium con efectos de Glassmorphism.
--   **100% Responsivo**: Optimizado para dispositivos móviles, tablets y escritorio.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🛠️ Tecnologías
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
--   **Vue.js 3**: Reactividad y gestión de estado moderna.
--   **Vanilla CSS**: Diseño personalizado sin dependencias pesadas.
--   **Lucide Icons**: Iconografía moderna y limpia.
--   **LocalStorage**: Persistencia de datos local sin necesidad de base de datos externa.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 🚀 Instalación y Despliegue
+## Learn More
 
-### Local
-1. Clona este repositorio.
-2. Abre `index.html` en tu navegador preferido.
+To learn more about Next.js, take a look at the following resources:
 
-### Vercel
-Esta aplicación está lista para ser desplegada en Vercel con un solo clic. Solo necesitas importar el repositorio en tu panel de Vercel y se detectará automáticamente como un proyecto estático.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 📄 Licencia
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-Este proyecto está bajo la Licencia MIT.
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
