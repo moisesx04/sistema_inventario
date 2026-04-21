@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario Pro X | Professional View</title>
+    <title>Inventario Pro X | Fixed Edition</title>
     <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,164 +21,109 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style type="text/tailwindcss">
         @layer base {
-            body { @apply font-['Plus_Jakarta_Sans'] bg-slate-100 text-slate-800 transition-colors duration-500; }
+            body { @apply font-['Plus_Jakarta_Sans'] bg-slate-100 text-slate-800; }
         }
         @layer components {
-            .card-grid { @apply bg-white border border-slate-200 shadow-sm rounded-3xl overflow-hidden; }
-            .sidebar-item { @apply flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-200 font-bold text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-200 hover:text-brand-600; }
-            .sidebar-item.active { @apply bg-brand-600 text-white shadow-xl shadow-brand-600/30; }
-            .btn-action { @apply bg-brand-600 hover:bg-brand-700 text-white font-black py-3 px-8 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-600/20 flex items-center gap-2; }
-            .grid-table { @apply w-full border-collapse bg-white; }
-            .grid-table th { @apply px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 border border-slate-200; }
-            .grid-table td { @apply px-8 py-5 border border-slate-200 font-bold text-slate-700; }
-            .grid-table tr:nth-child(even) { @apply bg-slate-50/50; }
+            .sidebar-btn {
+                @apply flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-300 font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-200;
+            }
+            .sidebar-btn.active { @apply bg-brand-600 text-white shadow-xl shadow-brand-600/30 hover:bg-brand-600; }
+            .card-premium { @apply bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden; }
         }
     </style>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
+        const { useState, useEffect } = React;
 
-        const Icon = ({ name, className = "" }) => {
+        const LucideIcon = ({ name }) => {
             useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [name]);
-            return <i data-lucide={name} className={className}></i>;
-        };
-
-        const DashboardView = ({ stats, products }) => {
-            const chartRef = useRef(null);
-            const canvasRef = useRef(null);
-
-            useEffect(() => {
-                if (chartRef.current) chartRef.current.destroy();
-                const ctx = canvasRef.current.getContext('2d');
-                chartRef.current = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['En Stock', 'Bajo Stock'],
-                        datasets: [{
-                            data: [products.length - stats.alerts, stats.alerts],
-                            backgroundColor: ['#22c55e', '#f97316'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: { cutout: '80%', plugins: { legend: { display: false } } }
-                });
-            }, [products, stats]);
-
-            return (
-                <div className="space-y-8 animate-in fade-in duration-500">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="card-grid p-8 border-t-4 border-brand-600"><p className="text-slate-400 font-bold text-xs">Total Stock</p><h3 className="text-4xl font-black">{stats.total}</h3></div>
-                        <div className="card-grid p-8 border-t-4 border-orange-500"><p className="text-slate-400 font-bold text-xs">Alertas Críticas</p><h3 className="text-4xl font-black text-orange-500">{stats.alerts}</h3></div>
-                        <div className="card-grid p-8 border-t-4 border-slate-800"><p className="text-slate-400 font-bold text-xs">Valor Inventario</p><h3 className="text-4xl font-black text-brand-700">${stats.value.toLocaleString()}</h3></div>
-                    </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="card-grid p-10 flex flex-col items-center">
-                            <h3 className="text-xl font-black mb-6">Estado de Salud</h3>
-                            <div className="relative w-64 h-64">
-                                <canvas ref={canvasRef}></canvas>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-3xl font-black text-brand-600">{Math.round(((products.length - stats.alerts)/products.length)*100)}%</span>
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase">Óptimo</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="card-grid p-10">
-                            <h3 className="text-xl font-black mb-6">Últimas Alertas</h3>
-                            <div className="space-y-4">
-                                {products.filter(p => p.stock < 5).map(p => (
-                                    <div key={p.id} className="flex items-center justify-between p-4 bg-orange-50 rounded-2xl border border-orange-100">
-                                        <span className="font-bold">{p.name}</span>
-                                        <span className="text-orange-600 font-black text-xs">{p.stock} Uds restantes</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const InventoryView = ({ products, setProducts }) => {
-            const [search, setSearch] = useState('');
-            return (
-                <div className="card-grid animate-in slide-in-from-bottom-4 duration-500">
-                    <div className="p-8 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                        <h3 className="font-black text-xl">Control de Existencias</h3>
-                        <input type="text" placeholder="Filtrar por nombre..." className="bg-white border border-slate-300 px-6 py-2 rounded-xl outline-none font-bold text-sm w-80" onChange={e => setSearch(e.target.value)} />
-                    </div>
-                    <table className="grid-table">
-                        <thead>
-                            <tr><th>Nombre</th><th className="text-center">Stock</th><th>Precio</th><th className="text-right">Borrar</th></tr>
-                        </thead>
-                        <tbody>
-                            {products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => (
-                                <tr key={p.id}>
-                                    <td className="text-lg font-black">{p.name}</td>
-                                    <td className="text-center"><span className={`px-4 py-1 rounded-full text-xs font-black ${p.stock < 5 ? 'bg-orange-100 text-orange-600' : 'bg-brand-100 text-brand-600'}`}>{p.stock} uds</span></td>
-                                    <td className="font-black">${p.price.toLocaleString()}</td>
-                                    <td className="text-right"><button onClick={() => setProducts(products.filter(item => item.id !== p.id))} className="text-slate-300 hover:text-red-500"><Icon name="trash-2" /></button></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            );
+            return <i data-lucide={name} className="w-5 h-5 pointer-events-none"></i>;
         };
 
         const App = () => {
-            const [products, setProducts] = useState(JSON.parse(localStorage.getItem('inventory_products') || '[]'));
-            const [activeTab, setActiveTab] = useState('dashboard');
+            const [view, setView] = useState('dashboard');
+            const [products, setProducts] = useState(JSON.parse(localStorage.getItem('products_v3') || '[]'));
 
             useEffect(() => {
                 if (products.length === 0) {
                     setProducts([
                         { id: 1, name: 'MacBook Pro M3', stock: 15, price: 2499 },
-                        { id: 2, name: 'iPhone 15 Pro', stock: 8, price: 999 },
-                        { id: 3, name: 'Mouse Inalámbrico', stock: 2, price: 50 }
+                        { id: 2, name: 'iPhone 15 Pro', stock: 4, price: 999 }
                     ]);
                 }
             }, []);
 
-            useEffect(() => { localStorage.setItem('inventory_products', JSON.stringify(products)); }, [products]);
-
-            const stats = useMemo(() => ({
-                total: products.reduce((acc, p) => acc + p.stock, 0),
-                value: products.reduce((acc, p) => acc + (p.price * p.stock), 0),
-                alerts: products.filter(p => p.stock < 5).length
-            }), [products]);
+            useEffect(() => { localStorage.setItem('products_v3', JSON.stringify(products)); }, [products]);
 
             return (
                 <div className="min-h-screen flex">
-                    <aside className="w-72 p-8 border-r border-slate-300 bg-white hidden lg:flex flex-col">
-                        <div className="flex items-center gap-3 mb-12">
-                            <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white"><Icon name="box" /></div>
+                    {/* Sidebar */}
+                    <aside className="w-72 bg-white border-r border-slate-200 p-8 flex flex-col gap-10">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white"><LucideIcon name="box" /></div>
                             <h1 className="text-xl font-black">Vortex<span className="text-brand-600">Stock</span></h1>
                         </div>
-                        <nav className="space-y-4">
-                            <button onClick={() => setActiveTab('dashboard')} className={`sidebar-item w-full ${activeTab === 'dashboard' ? 'active' : ''}`}><Icon name="grid" /> DASHBOARD</button>
-                            <button onClick={() => setActiveTab('inventory')} className={`sidebar-item w-full ${activeTab === 'inventory' ? 'active' : ''}`}><Icon name="list" /> INVENTARIO</button>
+                        <nav className="flex flex-col gap-2">
+                            <button onClick={() => setView('dashboard')} className={`sidebar-btn ${view === 'dashboard' ? 'active' : ''}`}>
+                                <LucideIcon name="grid" /> <span>Dashboard</span>
+                            </button>
+                            <button onClick={() => setView('inventory')} className={`sidebar-btn ${view === 'inventory' ? 'active' : ''}`}>
+                                <LucideIcon name="list" /> <span>Inventario</span>
+                            </button>
                         </nav>
                     </aside>
 
-                    <main className="flex-1 p-10 bg-slate-100">
-                        <header className="flex justify-between items-center mb-10">
-                            <h2 className="text-4xl font-black tracking-tighter text-slate-900">{activeTab === 'dashboard' ? 'Resumen Maestro' : 'Control Inventario'}</h2>
-                            <button className="btn-action"><Icon name="plus" /> NUEVO</button>
+                    {/* Main Content */}
+                    <main className="flex-1 p-12 bg-slate-50">
+                        <header className="mb-10">
+                            <h2 className="text-4xl font-black tracking-tighter">{view === 'dashboard' ? 'Resumen Maestro' : 'Control de Stock'}</h2>
                         </header>
 
-                        {activeTab === 'dashboard' ? <DashboardView stats={stats} products={products} /> : <InventoryView products={products} setProducts={setProducts} />}
+                        {view === 'dashboard' ? (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div className="card-premium p-8 border-l-8 border-brand-600">
+                                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Total</p>
+                                    <h3 className="text-4xl font-black">{products.reduce((a, b) => a + b.stock, 0)}</h3>
+                                </div>
+                                <div className="card-premium p-8 border-l-8 border-orange-500">
+                                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Alertas</p>
+                                    <h3 className="text-4xl font-black text-orange-600">{products.filter(p => p.stock < 5).length}</h3>
+                                </div>
+                                <div className="card-premium p-8 border-l-8 border-slate-800">
+                                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Capital</p>
+                                    <h3 className="text-4xl font-black text-brand-700">${products.reduce((a, b) => a + (b.price * b.stock), 0).toLocaleString()}</h3>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="card-premium">
+                                <table className="w-full text-left">
+                                    <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200">
+                                        <tr><th className="px-10 py-6">Producto</th><th className="px-10 py-6">Stock</th><th className="px-10 py-6">Precio</th></tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 font-bold text-slate-700">
+                                        {products.map(p => (
+                                            <tr key={p.id} className="hover:bg-slate-50/50">
+                                                <td className="px-10 py-6 text-lg font-black text-slate-950">{p.name}</td>
+                                                <td className="px-10 py-6"><span className={`px-4 py-1.5 rounded-full text-xs font-black ${p.stock < 5 ? 'bg-orange-100 text-orange-600' : 'bg-brand-100 text-brand-600'}`}>{p.stock} uds</span></td>
+                                                <td className="px-10 py-6">${p.price.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </main>
                 </div>
             );
         };
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
