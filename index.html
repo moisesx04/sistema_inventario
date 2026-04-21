@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario Pro X | Vortex Edition</title>
+    <title>Inventario Pro X | Vortex Light</title>
     <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,7 +12,10 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95', 950: '#020617' }
+                        brand: { 
+                            50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 
+                            500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95', 950: '#020617' 
+                        }
                     }
                 }
             }
@@ -24,33 +27,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style type="text/tailwindcss">
         @layer base {
-            body { @apply font-['Plus_Jakarta_Sans'] bg-white text-slate-900 dark:bg-brand-950 dark:text-slate-100 transition-colors duration-500; }
+            body { 
+                @apply font-['Plus_Jakarta_Sans'] transition-colors duration-500; 
+            }
+            body:not(.dark) { @apply bg-slate-50 text-slate-900; }
+            body.dark { @apply bg-brand-950 text-slate-100; }
         }
         @layer components {
-            .glass-panel { @apply bg-white/80 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/5 shadow-2xl; }
-            .sidebar-item { @apply flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-500 dark:text-slate-400 hover:bg-brand-500/10 hover:text-brand-600 dark:hover:text-brand-400; }
-            .sidebar-item.active { @apply bg-brand-600 text-white shadow-xl shadow-brand-600/20; }
-            .btn-action { @apply bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-6 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-600/30 flex items-center gap-2; }
+            .glass-panel { 
+                @apply backdrop-blur-xl border transition-all duration-300;
+            }
+            body:not(.dark) .glass-panel { @apply bg-white/90 border-slate-200 shadow-xl shadow-slate-200/50; }
+            body.dark .glass-panel { @apply bg-slate-900/40 border-white/5 shadow-2xl; }
+
+            .sidebar-item {
+                @apply flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 font-bold uppercase text-xs tracking-widest;
+            }
+            body:not(.dark) .sidebar-item { @apply text-slate-500 hover:bg-brand-50 hover:text-brand-600; }
+            body.dark .sidebar-item { @apply text-slate-400 hover:bg-brand-500/10 hover:text-brand-400; }
+
+            .sidebar-item.active { @apply shadow-lg; }
+            body:not(.dark) .sidebar-item.active { @apply bg-brand-600 text-white shadow-brand-600/30; }
+            body.dark .sidebar-item.active { @apply bg-brand-600 text-white shadow-brand-600/20; }
+
+            .btn-action {
+                @apply bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-6 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-600/30 flex items-center gap-2;
+            }
         }
     </style>
     <!-- Core Libraries -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="dark">
-    <div id="root">
-        <div class="min-h-screen flex items-center justify-center bg-brand-950">
-            <div class="text-center">
-                <div class="w-16 h-16 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-slate-400 font-bold animate-pulse">Sincronizando Vortex Stock...</p>
-            </div>
-        </div>
-    </div>
+<body class=""> <!-- Removed .dark by default to show Light Mode improvements -->
+    <div id="root"></div>
 
-    <!-- React Application (Simplified JS for maximum compatibility) -->
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef } = React;
 
@@ -59,10 +73,20 @@
             return <i data-lucide={name} className={className}></i>;
         };
 
+        const StatCard = ({ title, value, icon, color }) => (
+            <div className="glass-panel p-8 rounded-[2rem] flex flex-col group hover:scale-[1.02]">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${color}`}>
+                    <Icon name={icon} className="w-6 h-6" />
+                </div>
+                <p className="text-slate-400 dark:text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em]">{title}</p>
+                <h3 className="text-4xl font-black mt-1 tracking-tighter">{value}</h3>
+            </div>
+        );
+
         const App = () => {
             const [products, setProducts] = useState(JSON.parse(localStorage.getItem('inventory_products') || '[]'));
             const [activeTab, setActiveTab] = useState('dashboard');
-            const [isDark, setIsDark] = useState(true);
+            const [isDark, setIsDark] = useState(false); // Default to Light Mode for user to see
             const [isModalOpen, setIsModalOpen] = useState(false);
             const [form, setForm] = useState({ name: '', category: 'Electrónica', stock: 0, price: 0, minStock: 5 });
 
@@ -70,7 +94,8 @@
                 if (products.length === 0) {
                     setProducts([
                         { id: 1, name: 'MacBook Pro M3', category: 'Electrónica', stock: 15, price: 2499, minStock: 5 },
-                        { id: 2, name: 'iPhone 15 Pro', category: 'Electrónica', stock: 8, price: 999, minStock: 10 }
+                        { id: 2, name: 'iPhone 15 Pro', category: 'Electrónica', stock: 8, price: 999, minStock: 10 },
+                        { id: 3, name: 'iPad Air M2', category: 'Electrónica', stock: 25, price: 599, minStock: 12 }
                     ]);
                 }
             }, []);
@@ -87,41 +112,88 @@
             }), [products]);
 
             return (
-                <div className="min-h-screen flex bg-slate-50 dark:bg-brand-950">
+                <div className="min-h-screen flex">
+                    {/* Sidebar */}
                     <aside className="fixed inset-y-0 left-0 w-72 p-6 z-50 hidden lg:block">
                         <div className="glass-panel h-full rounded-[2.5rem] p-8 flex flex-col">
                             <div className="flex items-center gap-4 mb-12">
-                                <div className="w-12 h-12 bg-brand-600 rounded-2xl flex items-center justify-center text-white"><Icon name="zap" /></div>
-                                <h1 className="text-2xl font-black">Vortex<span className="text-brand-500">Stock</span></h1>
+                                <div className="w-12 h-12 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand-600/30">
+                                    <Icon name="zap" className="w-7 h-7" />
+                                </div>
+                                <h1 className="text-2xl font-black tracking-tight">Vortex<span className="text-brand-500">Stock</span></h1>
                             </div>
                             <nav className="space-y-3 flex-grow">
                                 <button onClick={() => setActiveTab('dashboard')} className={`sidebar-item w-full ${activeTab === 'dashboard' ? 'active' : ''}`}><Icon name="layout-grid" /> <span>Dashboard</span></button>
                                 <button onClick={() => setActiveTab('inventory')} className={`sidebar-item w-full ${activeTab === 'inventory' ? 'active' : ''}`}><Icon name="database" /> <span>Inventario</span></button>
                             </nav>
+                            <button onClick={() => setIsDark(!isDark)} className="sidebar-item border border-slate-200 dark:border-white/5 mt-auto">
+                                <Icon name={isDark ? 'sun' : 'moon'} /> <span>{isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>
+                            </button>
                         </div>
                     </aside>
+
+                    {/* Main */}
                     <main className="flex-1 lg:ml-72 p-8 lg:p-12">
-                        <header className="flex justify-between items-center mb-12">
-                            <h2 className="text-4xl font-black">Dashboard</h2>
-                            <button onClick={() => setIsModalOpen(true)} className="btn-action"><Icon name="plus" /> NUEVO</button>
+                        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                            <div>
+                                <h2 className="text-5xl font-black tracking-tighter mb-2">Panel Maestro</h2>
+                                <p className="text-slate-500 font-bold uppercase text-xs tracking-widest">Gestión de Almacén Pro</p>
+                            </div>
+                            <button onClick={() => setIsModalOpen(true)} className="btn-action px-8 py-4 text-lg">
+                                <Icon name="plus-circle" /> NUEVO REGISTRO
+                            </button>
                         </header>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div className="glass-panel p-8 rounded-3xl"><p className="text-slate-500 font-bold uppercase text-xs">Total</p><h3 className="text-3xl font-black">{stats.total}</h3></div>
-                            <div className="glass-panel p-8 rounded-3xl"><p className="text-slate-500 font-bold uppercase text-xs">Alertas</p><h3 className="text-3xl font-black text-rose-500">{stats.lowStock}</h3></div>
-                            <div className="glass-panel p-8 rounded-3xl"><p className="text-slate-500 font-bold uppercase text-xs">Capital</p><h3 className="text-3xl font-black text-emerald-500">${stats.value.toLocaleString()}</h3></div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                            <StatCard title="Existencias" value={stats.total} icon="box" color="bg-brand-100 text-brand-600 dark:bg-brand-500/10 dark:text-brand-500" />
+                            <StatCard title="Alertas" value={stats.lowStock} icon="alert-octagon" color="bg-rose-100 text-rose-600 dark:bg-rose-500/10 dark:text-rose-500" />
+                            <StatCard title="Capital" value={`$${stats.value.toLocaleString()}`} icon="trending-up" color="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-500" />
                         </div>
+
+                        {activeTab === 'inventory' && (
+                            <div className="glass-panel rounded-[2.5rem] overflow-hidden">
+                                <table className="w-full text-left">
+                                    <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                                        <tr className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-400">
+                                            <th className="px-8 py-6">Producto</th>
+                                            <th className="px-8 py-6">Estado</th>
+                                            <th className="px-8 py-6 text-center">Cantidad</th>
+                                            <th className="px-8 py-6 text-right">Precio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                                        {products.map(p => (
+                                            <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                                                <td className="px-8 py-6 font-black text-lg">{p.name}</td>
+                                                <td className="px-8 py-6">
+                                                    <span className={`px-4 py-1 rounded-full text-[10px] font-black ${p.stock <= p.minStock ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                                                        {p.stock <= p.minStock ? 'CRÍTICO' : 'OPTIMO'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-8 py-6 text-center font-black text-2xl">{p.stock}</td>
+                                                <td className="px-8 py-6 text-right font-black text-xl">${p.price.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </main>
+
                     {isModalOpen && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-brand-950/80 backdrop-blur-md">
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 dark:bg-brand-950/80 backdrop-blur-md">
                             <div className="glass-panel w-full max-w-xl rounded-[3rem] p-10">
-                                <h2 className="text-2xl font-black mb-6 text-center">Nuevo Registro</h2>
-                                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setProducts([...products, {...form, id: Date.now()}]); setIsModalOpen(false); }}>
-                                    <input className="w-full bg-white/5 p-4 rounded-2xl outline-none font-bold" placeholder="Nombre" onChange={e => setForm({...form, name: e.target.value})} />
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <input type="number" placeholder="Stock" className="w-full bg-white/5 p-4 rounded-2xl" onChange={e => setForm({...form, stock: parseInt(e.target.value)})} />
-                                        <input type="number" placeholder="Precio" className="w-full bg-white/5 p-4 rounded-2xl" onChange={e => setForm({...form, price: parseFloat(e.target.value)})} />
+                                <div className="flex justify-between items-center mb-8">
+                                    <h2 className="text-3xl font-black tracking-tight">Nuevo Nexo</h2>
+                                    <button onClick={() => setIsModalOpen(false)} className="w-10 h-10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-white/5 rounded-full"><Icon name="x" /></button>
+                                </div>
+                                <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setProducts([...products, {...form, id: Date.now()}]); setIsModalOpen(false); }}>
+                                    <input required className="w-full bg-slate-100 dark:bg-white/5 px-6 py-4 rounded-2xl outline-none font-bold text-lg" placeholder="Nombre del Producto" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <input type="number" placeholder="Cantidad" required className="w-full bg-slate-100 dark:bg-white/5 px-6 py-4 rounded-2xl outline-none font-bold" onChange={e => setForm({...form, stock: parseInt(e.target.value)})} />
+                                        <input type="number" placeholder="Precio" step="0.01" required className="w-full bg-slate-100 dark:bg-white/5 px-6 py-4 rounded-2xl outline-none font-bold" onChange={e => setForm({...form, price: parseFloat(e.target.value)})} />
                                     </div>
-                                    <button className="w-full btn-action justify-center py-4 text-xl">GUARDAR</button>
+                                    <button className="w-full btn-action justify-center py-5 text-xl tracking-widest">SINCRONIZAR</button>
                                 </form>
                             </div>
                         </div>
