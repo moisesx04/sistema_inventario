@@ -105,7 +105,7 @@ export function ProductForm() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeDialog()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">
             {isEditing ? "Editar Producto" : "Nuevo Producto"}
@@ -113,12 +113,12 @@ export function ProductForm() {
           <DialogDescription>
             {isEditing
               ? "Modifica los datos del producto y guarda los cambios."
-              : "Completa el formulario para agregar un nuevo producto al inventario."}
+              : "Completa el formulario para agregar un nuevo producto."}
           </DialogDescription>
         </DialogHeader>
         <Separator />
         <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-5 pt-2">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="col-span-2 space-y-1.5">
               <Label htmlFor="name">
                 Nombre <span className="text-rose-500">*</span>

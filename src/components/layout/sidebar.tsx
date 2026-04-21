@@ -24,7 +24,11 @@ const routes = [
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -34,10 +38,14 @@ export function Sidebar() {
     router.refresh();
   };
 
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   return (
-    <div className="flex flex-col h-full bg-slate-900 text-white w-64 p-4 border-r border-slate-800">
+    <div className="flex flex-col h-full bg-slate-900 text-white w-full p-4 border-r border-slate-800">
       <div className="px-3 py-4 mb-6">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2" onClick={handleLinkClick}>
           <div className="bg-indigo-600 p-2 rounded-lg">
             <Package className="h-6 w-6 text-white" />
           </div>
@@ -50,6 +58,7 @@ export function Sidebar() {
           <Link
             key={route.href}
             href={route.href}
+            onClick={handleLinkClick}
             className={cn(
               "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-slate-800 rounded-lg transition-colors",
               pathname === route.href ? "text-white bg-slate-800" : "text-slate-400"
@@ -67,7 +76,10 @@ export function Sidebar() {
         <Button 
           variant="ghost" 
           className="w-full justify-start text-slate-400 hover:text-white hover:bg-slate-800"
-          onClick={handleLogout}
+          onClick={() => {
+            handleLogout();
+            handleLinkClick();
+          }}
         >
           <LogOut className="h-5 w-5 mr-3" />
           Cerrar Sesión

@@ -59,10 +59,10 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="p-4 md:p-10 max-w-4xl mx-auto space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Configuración</h1>
-        <p className="text-slate-500 mt-1">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Configuración</h1>
+        <p className="text-slate-500 mt-1 text-sm md:text-base">
           Administra las opciones avanzadas del sistema.
         </p>
       </div>

@@ -11,22 +11,22 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2, Package } from "lucide-react";
+import { Edit2, Trash2, Package, MoreHorizontal } from "lucide-react";
 import { useInventoryStore, type Product } from "@/lib/store";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { toast } from "sonner";
 
 function StockBadge({ stock }: { stock: number }) {
   if (stock === 0)
-    return <Badge variant="destructive">Agotado</Badge>;
+    return <Badge variant="destructive" className="text-[10px]">Agotado</Badge>;
   if (stock < 10)
     return (
-      <Badge className="bg-amber-50 text-amber-800 hover:bg-amber-50 border border-amber-200">
-        Poco: {stock}
+      <Badge className="bg-amber-50 text-amber-800 hover:bg-amber-50 border border-amber-200 text-[10px]">
+        {stock} uds.
       </Badge>
     );
   return (
-    <Badge className="bg-emerald-50 text-emerald-800 hover:bg-emerald-50 border border-emerald-200">
+    <Badge className="bg-emerald-50 text-emerald-800 hover:bg-emerald-50 border border-emerald-200 text-[10px]">
       {stock} uds.
     </Badge>
   );
@@ -48,7 +48,7 @@ export function ProductList() {
       if (!response.ok) throw new Error("Error al obtener productos");
       return response.json();
     },
-    staleTime: 30_000, // 30s cache
+    staleTime: 30_000,
   });
 
   const deleteMutation = useMutation({
@@ -62,7 +62,7 @@ export function ProductList() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Producto eliminado correctamente");
+      toast.success("Producto eliminado");
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -71,7 +71,7 @@ export function ProductList() {
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border bg-white mt-6 p-10 text-center">
+      <div className="rounded-xl border bg-white mt-4 md:mt-6 p-10 text-center">
         <Package className="h-8 w-8 text-slate-300 animate-pulse mx-auto mb-3" />
         <p className="text-slate-400 text-sm">Cargando inventario...</p>
       </div>
@@ -79,92 +79,90 @@ export function ProductList() {
   }
 
   return (
-    <div className={`rounded-xl border bg-white mt-6 transition-opacity ${isFetching ? "opacity-70" : "opacity-100"}`}>
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-slate-50 rounded-t-xl">
-            <TableHead className="font-semibold text-slate-600">SKU</TableHead>
-            <TableHead className="font-semibold text-slate-600">Nombre</TableHead>
-            <TableHead className="font-semibold text-slate-600">Categoría</TableHead>
-            <TableHead className="text-right font-semibold text-slate-600">Precio</TableHead>
-            <TableHead className="text-center font-semibold text-slate-600">Stock</TableHead>
-            <TableHead className="text-right font-semibold text-slate-600">Acciones</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {!products || products.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center h-32">
-                <Package className="h-8 w-8 text-slate-200 mx-auto mb-2" />
-                <p className="text-slate-400 text-sm">
-                  {searchQuery
-                    ? "No se encontraron productos con esa búsqueda."
-                    : "El inventario está vacío. Agrega el primer producto."}
-                </p>
-              </TableCell>
+    <div className={`rounded-xl border bg-white mt-4 md:mt-6 transition-opacity ${isFetching ? "opacity-70" : "opacity-100"}`}>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-slate-50">
+              <TableHead className="font-semibold text-slate-600 min-w-[100px]">Producto</TableHead>
+              <TableHead className="hidden md:table-cell font-semibold text-slate-600">SKU</TableHead>
+              <TableHead className="hidden sm:table-cell font-semibold text-slate-600">Categoría</TableHead>
+              <TableHead className="text-right font-semibold text-slate-600">Precio</TableHead>
+              <TableHead className="text-center font-semibold text-slate-600">Stock</TableHead>
+              <TableHead className="text-right font-semibold text-slate-600">Acciones</TableHead>
             </TableRow>
-          ) : (
-            products.map((product) => (
-              <TableRow
-                key={product.id}
-                className="hover:bg-slate-50 transition-colors group"
-              >
-                <TableCell className="font-mono text-xs text-slate-500">
-                  {product.sku}
-                </TableCell>
-                <TableCell className="font-medium text-slate-900">
-                  {product.name}
-                  {product.description && (
-                    <p className="text-xs text-slate-400 font-normal mt-0.5 truncate max-w-xs">
-                      {product.description}
-                    </p>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {product.category ? (
-                    <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-100">
-                      {product.category}
-                    </span>
-                  ) : (
-                    <span className="text-slate-300 text-xs">—</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right font-semibold text-slate-800">
-                  ${product.price.toFixed(2)}
-                </TableCell>
-                <TableCell className="text-center">
-                  <StockBadge stock={product.stock} />
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
-                      onClick={() => setEditingProduct(product)}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-slate-500 hover:text-rose-600 hover:bg-rose-50"
-                      disabled={deleteMutation.isPending}
-                      onClick={() => {
-                        if (confirm(`¿Eliminar "${product.name}"?`)) {
-                          deleteMutation.mutate(product.id);
-                        }
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+          </TableHeader>
+          <TableBody>
+            {!products || products.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center h-32">
+                  <Package className="h-8 w-8 text-slate-200 mx-auto mb-2" />
+                  <p className="text-slate-400 text-sm">
+                    No se encontraron productos.
+                  </p>
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              products.map((product) => (
+                <TableRow
+                  key={product.id}
+                  className="hover:bg-slate-50 transition-colors group"
+                >
+                  <TableCell className="font-medium text-slate-900">
+                    <div className="flex flex-col">
+                      <span className="truncate max-w-[120px] md:max-w-xs">{product.name}</span>
+                      <span className="md:hidden text-[10px] text-slate-500 font-mono mt-0.5">{product.sku}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell font-mono text-xs text-slate-500">
+                    {product.sku}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {product.category ? (
+                      <span className="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-100">
+                        {product.category}
+                      </span>
+                    ) : (
+                      <span className="text-slate-300 text-xs">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right font-semibold text-slate-800 text-sm">
+                    ${product.price.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <StockBadge stock={product.stock} />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
+                        onClick={() => setEditingProduct(product)}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-slate-500 hover:text-rose-600 hover:bg-rose-50 hidden md:inline-flex"
+                        disabled={deleteMutation.isPending}
+                        onClick={() => {
+                          if (confirm(`¿Eliminar "${product.name}"?`)) {
+                            deleteMutation.mutate(product.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
