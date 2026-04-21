@@ -12,19 +12,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit2, Trash2, Package } from "lucide-react";
-import { useInventoryStore } from "@/lib/store";
+import { useInventoryStore, type Product } from "@/lib/store";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { toast } from "sonner";
-
-interface Product {
-  id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  stock: number;
-  category: string | null;
-  sku: string;
-}
 
 function StockBadge({ stock }: { stock: number }) {
   if (stock === 0)
