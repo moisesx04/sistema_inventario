@@ -41,7 +41,7 @@ export function Sidebar() {
           <div className="bg-indigo-600 p-2 rounded-lg">
             <Package className="h-6 w-6 text-white" />
           </div>
-          <h1 className="font-bold text-xl">Inventario Pro</h1>
+          <h1 className="font-bold text-xl">Inventario 1</h1>
         </Link>
       </div>
 
@@ -72,6 +72,10 @@ export function Sidebar() {
           <LogOut className="h-5 w-5 mr-3" />
           Cerrar Sesión
         </Button>
+        <p className="text-[10px] text-slate-600 text-center mt-3 leading-relaxed">
+          Desarrollado por<br />
+          <span className="text-slate-500 font-medium">Moises Cuevas</span>
+        </p>
       </div>
     </div>
   );

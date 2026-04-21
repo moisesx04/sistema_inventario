@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sistema de Inventario",
-  description: "Gestión de inventario moderna",
+  title: "Inventario 1",
+  description: "Sistema de inventario — Desarrollado por Moises Cuevas",
 };
 
 export default function RootLayout({

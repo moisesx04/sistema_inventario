@@ -45,7 +45,7 @@ export default function LoginPage() {
           <div className="bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
             <Package2 className="h-6 w-6 text-indigo-300" />
           </div>
-          <span className="text-white font-bold text-xl tracking-tight">Inventario Pro</span>
+          <span className="text-white font-bold text-xl tracking-tight">Inventario 1</span>
         </div>
 
         <div className="relative z-10 space-y-6">
@@ -85,7 +85,7 @@ export default function LoginPage() {
             <div className="bg-indigo-600 p-2 rounded-lg">
               <Package2 className="h-5 w-5 text-white" />
             </div>
-            <span className="text-white font-bold text-lg">Inventario Pro</span>
+            <span className="text-white font-bold text-lg">Inventario 1</span>
           </div>
 
           <div className="space-y-1">
@@ -159,7 +159,8 @@ export default function LoginPage() {
           </form>
 
           <p className="text-center text-slate-600 text-xs">
-            Sistema de demostración — credenciales proporcionadas por el administrador.
+            Sistema de demostración — credenciales proporcionadas por el administrador.<br />
+          <span className="text-slate-700">Desarrollado por <span className="text-indigo-500 font-medium">Moises Cuevas</span></span>
           </p>
         </div>
       </div>
