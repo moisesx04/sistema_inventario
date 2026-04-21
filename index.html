@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario Pro Ultra | React + Tailwind</title>
+    <title>Inventario Pro X | TS + Tailwind</title>
     <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,21 +12,26 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                            950: '#020617', // Super dark bg
                         },
+                        accent: {
+                            rose: '#fb7185',
+                            violet: '#a78bfa',
+                        }
                     },
-                    backdropBlur: {
-                        xs: '2px',
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     }
                 }
             }
@@ -35,19 +40,32 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style type="text/tailwindcss">
         @layer base {
-            body { @apply font-['Inter'] bg-slate-50 text-slate-900 dark:bg-[#0f172a] dark:text-slate-100 transition-colors duration-300; }
-            h1, h2, h3 { @apply font-['Outfit']; }
+            body { 
+                @apply font-['Plus_Jakarta_Sans'] bg-white text-slate-900 dark:bg-brand-950 dark:text-slate-100 transition-colors duration-500;
+                background-image: radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.05) 0px, transparent 50%),
+                                  radial-gradient(at 100% 100%, rgba(251, 113, 133, 0.05) 0px, transparent 50%);
+            }
         }
         @layer components {
-            .glass { @apply bg-white/70 dark:bg-slate-800/60 backdrop-blur-md border border-white/20 dark:border-slate-700/50 shadow-xl; }
-            .btn-primary { @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg shadow-primary-500/30; }
-            .nav-item { @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary-600 dark:hover:text-primary-400; }
-            .nav-item.active { @apply bg-primary-600 text-white shadow-lg shadow-primary-500/30; }
+            .glass-panel { 
+                @apply bg-white/80 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/5 shadow-2xl;
+            }
+            .sidebar-item {
+                @apply flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 text-slate-500 dark:text-slate-400 hover:bg-brand-500/10 hover:text-brand-600 dark:hover:text-brand-400;
+            }
+            .sidebar-item.active {
+                @apply bg-brand-600 text-white shadow-xl shadow-brand-600/20 hover:bg-brand-600 hover:text-white;
+            }
+            .stat-card-v2 {
+                @apply relative overflow-hidden glass-panel p-6 rounded-[2rem] group hover:scale-[1.03] transition-all duration-500;
+            }
+            .btn-action {
+                @apply bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-6 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-600/30 flex items-center gap-2;
+            }
         }
-        [v-cloak] { display: none; }
     </style>
     <!-- Core Libraries -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -59,7 +77,7 @@
 <body class="dark">
     <div id="root"></div>
 
-    <!-- React Application -->
-    <script type="text/babel" src="app.js"></script>
+    <!-- React + TypeScript Application -->
+    <script type="text/babel" data-presets="react,typescript" src="app.js"></script>
 </body>
 </html>
