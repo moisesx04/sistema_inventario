@@ -29,12 +29,12 @@ export default function DashboardLayout({
             <div 
               role="button"
               tabIndex={0}
-              className="md:hidden flex items-center justify-center size-8 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors"
+              className="flex items-center justify-center size-9 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors"
             >
               <Menu className="h-6 w-6 text-slate-600" />
             </div>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-72 bg-slate-900 border-none">
+          <SheetContent side="left" className="p-0 w-60 bg-slate-900 border-none">
             <SheetHeader className="sr-only">
               <SheetTitle>Menú de Navegación</SheetTitle>
             </SheetHeader>
@@ -44,7 +44,7 @@ export default function DashboardLayout({
       </header>
 
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-64 shrink-0 h-full">
+      <div className="hidden md:flex w-60 shrink-0 h-full">
         <Sidebar />
       </div>
 
