@@ -18,15 +18,15 @@ import { toast } from "sonner";
 
 function StockBadge({ stock }: { stock: number }) {
   if (stock === 0)
-    return <Badge variant="destructive" className="text-[10px]">Agotado</Badge>;
+    return <Badge variant="destructive" className="text-[10px] font-black uppercase tracking-tighter">AGOTADO</Badge>;
   if (stock < 10)
     return (
-      <Badge className="bg-amber-50 text-amber-800 hover:bg-amber-50 border border-amber-200 text-[10px]">
-        {stock} uds.
+      <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-none text-[10px] font-black uppercase tracking-tighter">
+        BAJO: {stock} uds.
       </Badge>
     );
   return (
-    <Badge className="bg-emerald-50 text-emerald-800 hover:bg-emerald-50 border border-emerald-200 text-[10px]">
+    <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none text-[10px] font-black uppercase tracking-tighter">
       {stock} uds.
     </Badge>
   );
@@ -71,73 +71,72 @@ export function ProductList() {
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border bg-white mt-4 md:mt-6 p-10 text-center">
-        <Package className="h-8 w-8 text-slate-300 animate-pulse mx-auto mb-3" />
-        <p className="text-slate-400 text-sm">Cargando inventario...</p>
+      <div className="rounded-3xl border border-slate-100 bg-white mt-8 p-20 text-center shadow-2xl shadow-slate-200/50">
+        <Activity className="h-10 w-10 text-indigo-600 animate-spin mx-auto mb-4" />
+        <p className="text-slate-500 font-bold tracking-tight">Sincronizando existencias...</p>
       </div>
     );
   }
 
   return (
-    <div className={`rounded-xl border bg-white mt-4 md:mt-6 transition-opacity ${isFetching ? "opacity-70" : "opacity-100"}`}>
+    <div className={`rounded-3xl border border-slate-100 bg-white mt-8 shadow-2xl shadow-slate-200/50 overflow-hidden transition-all duration-500 ${isFetching ? "opacity-60 blur-[1px]" : "opacity-100"}`}>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-slate-50">
-              <TableHead className="font-semibold text-slate-600 min-w-[100px]">Producto</TableHead>
-              <TableHead className="hidden md:table-cell font-semibold text-slate-600">SKU</TableHead>
-              <TableHead className="hidden sm:table-cell font-semibold text-slate-600">Categoría</TableHead>
-              <TableHead className="text-right font-semibold text-slate-600">Precio</TableHead>
-              <TableHead className="text-center font-semibold text-slate-600">Stock</TableHead>
-              <TableHead className="text-right font-semibold text-slate-600">Acciones</TableHead>
+            <TableRow className="bg-slate-50/80 border-b border-slate-100">
+              <TableHead className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 py-6 px-8">Producto</TableHead>
+              <TableHead className="hidden md:table-cell font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 py-6">SKU</TableHead>
+              <TableHead className="hidden sm:table-cell font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 py-6 text-center">Estado</TableHead>
+              <TableHead className="text-right font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 py-6">Precio</TableHead>
+              <TableHead className="text-center font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 py-6">Stock</TableHead>
+              <TableHead className="text-right font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 py-6 px-8">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {!products || products.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center h-32">
-                  <Package className="h-8 w-8 text-slate-200 mx-auto mb-2" />
-                  <p className="text-slate-400 text-sm">
-                    No se encontraron productos.
-                  </p>
+                <TableCell colSpan={6} className="text-center py-20 italic">
+                  <Package className="h-10 w-10 text-slate-100 mx-auto mb-4" />
+                  <p className="text-slate-400 font-bold text-lg">No se encontraron productos en el sistema.</p>
                 </TableCell>
               </TableRow>
             ) : (
               products.map((product) => (
                 <TableRow
                   key={product.id}
-                  className="hover:bg-slate-50 transition-colors group"
+                  className="hover:bg-slate-50/50 transition-all group border-b border-slate-50 last:border-0"
                 >
-                  <TableCell className="font-medium text-slate-900">
+                  <TableCell className="py-6 px-8">
                     <div className="flex flex-col">
-                      <span className="truncate max-w-[120px] md:max-w-xs">{product.name}</span>
-                      <span className="md:hidden text-[10px] text-slate-500 font-mono mt-0.5">{product.sku}</span>
+                      <span className="font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{product.name}</span>
+                      <span className="text-[10px] text-slate-400 font-black uppercase tracking-tight mt-1 group-hover:text-slate-500 transition-colors">
+                        {product.category || "General"}
+                      </span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell font-mono text-xs text-slate-500">
+                  <TableCell className="hidden md:table-cell font-black text-[11px] text-slate-400 tracking-tight">
                     {product.sku}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    {product.category ? (
-                      <span className="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-100">
-                        {product.category}
-                      </span>
-                    ) : (
-                      <span className="text-slate-300 text-xs">—</span>
-                    )}
+                  <TableCell className="hidden sm:table-cell text-center">
+                    <div className={cn(
+                      "size-2 rounded-full mx-auto",
+                      product.stock <= 0 ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" : 
+                      product.stock <= 5 ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]" : 
+                      "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+                    )} />
                   </TableCell>
-                  <TableCell className="text-right font-semibold text-slate-800 text-sm">
-                    ${product.price.toFixed(2)}
+                  <TableCell className="text-right font-black text-slate-900 italic tracking-tighter">
+                    ${product.price.toLocaleString()}
                   </TableCell>
                   <TableCell className="text-center">
                     <StockBadge stock={product.stock} />
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
+                  <TableCell className="text-right px-8">
+                    <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50"
+                        className="h-10 w-10 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all"
                         onClick={() => setEditingProduct(product)}
                       >
                         <Edit2 className="h-4 w-4" />
@@ -145,7 +144,7 @@ export function ProductList() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-500 hover:text-rose-600 hover:bg-rose-50 hidden md:inline-flex"
+                        className="h-10 w-10 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all hidden md:inline-flex"
                         disabled={deleteMutation.isPending}
                         onClick={() => {
                           if (confirm(`¿Eliminar "${product.name}"?`)) {
