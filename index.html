@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario Pro X | Clean Edition</title>
+    <title>Inventario Pro X | High Contrast</title>
     <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,8 +13,8 @@
                 extend: {
                     colors: {
                         brand: { 
-                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 
-                            500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b'
+                            50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 
+                            500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d'
                         }
                     }
                 }
@@ -24,18 +24,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style type="text/tailwindcss">
         @layer base {
-            body { @apply font-['Plus_Jakarta_Sans'] bg-slate-50 text-slate-800 transition-colors duration-500; }
+            body { @apply font-['Plus_Jakarta_Sans'] bg-[#f8fafc] text-slate-800 transition-colors duration-500; }
             body.dark { @apply bg-slate-950 text-slate-100; }
         }
         @layer components {
-            .card-premium { 
-                @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md transition-all duration-300 rounded-3xl; 
+            .card-division { 
+                @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-sm rounded-3xl overflow-hidden; 
             }
-            .sidebar-link {
-                @apply flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-200 font-bold text-xs uppercase tracking-widest text-slate-500 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-500/10;
+            .sidebar-item {
+                @apply flex items-center gap-3 px-5 py-3 rounded-2xl transition-all duration-200 font-bold text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-100 hover:text-brand-600;
             }
-            .sidebar-link.active { @apply bg-brand-600 text-white shadow-lg shadow-brand-600/30; }
-            .btn-main { @apply bg-brand-600 hover:bg-brand-700 text-white font-black py-3 px-8 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-600/20 flex items-center gap-2; }
+            .sidebar-item.active { @apply bg-brand-600 text-white shadow-xl shadow-brand-600/30; }
+            .btn-action { @apply bg-brand-600 hover:bg-brand-700 text-white font-black py-3 px-8 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-600/20 flex items-center gap-2; }
+            .section-divider { @apply border-b border-slate-100 dark:border-white/5 my-6; }
         }
     </style>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -43,7 +44,7 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -59,13 +60,13 @@
             const [activeTab, setActiveTab] = useState('dashboard');
             const [isModalOpen, setIsModalOpen] = useState(false);
             const [search, setSearch] = useState('');
-            const [form, setForm] = useState({ name: '', stock: 0, price: 0, category: 'General' });
+            const [form, setForm] = useState({ name: '', stock: 0, price: 0 });
 
             useEffect(() => {
                 if (products.length === 0) {
                     setProducts([
-                        { id: 1, name: 'Laptop Pro 14', stock: 10, price: 1200, category: 'Equipos' },
-                        { id: 2, name: 'Monitor 4K', stock: 5, price: 450, category: 'Equipos' }
+                        { id: 1, name: 'MacBook Pro M3', stock: 15, price: 2499 },
+                        { id: 2, name: 'iPhone 15 Pro', stock: 8, price: 999 }
                     ]);
                 }
             }, []);
@@ -80,74 +81,106 @@
                 alerts: products.filter(p => p.stock < 5).length
             }), [products]);
 
-            const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
-
             return (
-                <div className="min-h-screen flex bg-slate-50">
-                    {/* Sidebar */}
-                    <aside className="w-72 p-6 border-r border-slate-200 bg-white hidden lg:block">
-                        <div className="flex items-center gap-3 mb-12 px-2">
+                <div className="min-h-screen flex">
+                    {/* Sidebar with solid border */}
+                    <aside className="w-72 p-8 border-r border-slate-200 bg-white hidden lg:flex flex-col">
+                        <div className="flex items-center gap-3 mb-10">
                             <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white"><Icon name="box" /></div>
                             <h1 className="text-xl font-black">Vortex<span className="text-brand-600">Stock</span></h1>
                         </div>
-                        <nav className="space-y-2">
-                            <button onClick={() => setActiveTab('dashboard')} className={`sidebar-link w-full ${activeTab === 'dashboard' ? 'active' : ''}`}><Icon name="grid" /> DASHBOARD</button>
-                            <button onClick={() => setActiveTab('inventory')} className={`sidebar-link w-full ${activeTab === 'inventory' ? 'active' : ''}`}><Icon name="list" /> INVENTARIO</button>
+                        <nav className="space-y-4">
+                            <button onClick={() => setActiveTab('dashboard')} className={`sidebar-item w-full ${activeTab === 'dashboard' ? 'active' : ''}`}><Icon name="grid" /> DASHBOARD</button>
+                            <button onClick={() => setActiveTab('inventory')} className={`sidebar-item w-full ${activeTab === 'inventory' ? 'active' : ''}`}><Icon name="list" /> INVENTARIO</button>
                         </nav>
+                        <div className="mt-auto pt-6 border-t border-slate-100">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">v2.0 Clean & Contrast</p>
+                        </div>
                     </aside>
 
-                    {/* Main */}
-                    <main className="flex-1 p-8 lg:p-12">
-                        <header className="flex justify-between items-center mb-10">
+                    {/* Main Content with contrasting background */}
+                    <main className="flex-1 p-10 lg:p-14 bg-[#f1f5f9]">
+                        <header className="flex justify-between items-start mb-12">
                             <div>
-                                <h2 className="text-4xl font-black tracking-tighter">Mi Almacén</h2>
-                                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Versión Limpia & Optimizada</p>
+                                <h2 className="text-5xl font-black tracking-tighter text-slate-900">Panel Maestro</h2>
+                                <p className="text-slate-500 font-bold text-xs uppercase tracking-widest mt-2 flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></span>
+                                    Sistema de Alta Precisión
+                                </p>
                             </div>
-                            <button onClick={() => setIsModalOpen(true)} className="btn-main"><Icon name="plus" /> AÑADIR</button>
+                            <button onClick={() => setIsModalOpen(true)} className="btn-action shadow-brand-600/30"><Icon name="plus" /> NUEVO REGISTRO</button>
                         </header>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                            <div className="card-premium p-8"><p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Existencias</p><h3 className="text-4xl font-black">{stats.total}</h3></div>
-                            <div className="card-premium p-8"><p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Alertas</p><h3 className="text-4xl font-black text-orange-500">{stats.alerts}</h3></div>
-                            <div className="card-premium p-8"><p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Valor Total</p><h3 className="text-4xl font-black text-brand-600">${stats.value.toLocaleString()}</h3></div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                            <div className="card-division p-8 flex flex-col gap-2">
+                                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Existencias</p>
+                                <h3 className="text-4xl font-black text-slate-900">{stats.total}</h3>
+                                <div className="w-full h-1 bg-slate-50 rounded-full mt-2"><div className="h-full bg-brand-500 w-1/2 rounded-full"></div></div>
+                            </div>
+                            <div className="card-division p-8 flex flex-col gap-2">
+                                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Alertas</p>
+                                <h3 className="text-4xl font-black text-orange-500">{stats.alerts}</h3>
+                                <div className="w-full h-1 bg-slate-50 rounded-full mt-2"><div className="h-full bg-orange-500 w-1/4 rounded-full"></div></div>
+                            </div>
+                            <div className="card-division p-8 flex flex-col gap-2">
+                                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Capital</p>
+                                <h3 className="text-4xl font-black text-brand-700">${stats.value.toLocaleString()}</h3>
+                                <div className="w-full h-1 bg-slate-50 rounded-full mt-2"><div className="h-full bg-brand-700 w-3/4 rounded-full"></div></div>
+                            </div>
                         </div>
 
-                        {activeTab === 'inventory' && (
-                            <div className="card-premium overflow-hidden">
-                                <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                                    <h3 className="font-black text-lg">Listado de Productos</h3>
-                                    <input type="text" placeholder="Buscar..." className="bg-slate-100 px-4 py-2 rounded-xl outline-none font-bold text-sm" onChange={e => setSearch(e.target.value)} />
+                        <div className="card-division">
+                            <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                <h3 className="font-black text-xl text-slate-900 tracking-tight">Inventario de Almacén</h3>
+                                <div className="relative">
+                                    <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                                    <input type="text" placeholder="Filtrar por nombre..." className="bg-white border border-slate-200 pl-10 pr-4 py-2 rounded-xl outline-none font-bold text-sm focus:ring-2 ring-brand-500/20 w-64" onChange={e => setSearch(e.target.value)} />
                                 </div>
-                                <table className="w-full text-left">
-                                    <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        <tr><th className="px-8 py-4">Producto</th><th className="px-8 py-4">Stock</th><th className="px-8 py-4">Precio</th><th className="px-8 py-4 text-right">Acciones</th></tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100 font-bold">
-                                        {filtered.map(p => (
-                                            <tr key={p.id} className="hover:bg-slate-50 transition-colors">
-                                                <td className="px-8 py-5 text-lg">{p.name}</td>
-                                                <td className="px-8 py-5"><span className={`px-3 py-1 rounded-full text-xs ${p.stock < 5 ? 'bg-orange-100 text-orange-600' : 'bg-brand-100 text-brand-600'}`}>{p.stock} uds</span></td>
-                                                <td className="px-8 py-5">${p.price.toLocaleString()}</td>
-                                                <td className="px-8 py-5 text-right"><button onClick={() => setProducts(products.filter(item => item.id !== p.id))} className="text-slate-300 hover:text-red-500 transition-colors"><Icon name="trash-2" /></button></td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
                             </div>
-                        )}
+                            <table className="w-full text-left">
+                                <thead className="bg-slate-50/80 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                    <tr><th className="px-10 py-5">Producto</th><th className="px-10 py-5 text-center">Stock</th><th className="px-10 py-5">Precio</th><th className="px-10 py-5 text-right">Acciones</th></tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 font-bold text-slate-700">
+                                    {products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => (
+                                        <tr key={p.id} className="hover:bg-slate-50/80 transition-colors group">
+                                            <td className="px-10 py-6 text-lg font-black text-slate-900">{p.name}</td>
+                                            <td className="px-10 py-6 text-center">
+                                                <span className={`px-4 py-1.5 rounded-full text-xs font-black tracking-tighter ${p.stock < 5 ? 'bg-orange-100 text-orange-600' : 'bg-brand-100 text-brand-600'}`}>{p.stock} uds</span>
+                                            </td>
+                                            <td className="px-10 py-6 text-slate-900">${p.price.toLocaleString()}</td>
+                                            <td className="px-10 py-6 text-right">
+                                                <button onClick={() => setProducts(products.filter(item => item.id !== p.id))} className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-50 text-slate-300 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100">
+                                                    <Icon name="trash-2" className="w-5 h-5" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </main>
 
                     {isModalOpen && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/20 backdrop-blur-sm">
-                            <div className="bg-white w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl border border-slate-100">
-                                <div className="flex justify-between items-center mb-8"><h2 className="text-2xl font-black">Nuevo Producto</h2><button onClick={() => setIsModalOpen(false)}><Icon name="x" /></button></div>
-                                <form className="space-y-4" onSubmit={e => { e.preventDefault(); setProducts([...products, {...form, id: Date.now()}]); setIsModalOpen(false); }}>
-                                    <input required className="w-full bg-slate-100 p-4 rounded-2xl outline-none font-bold" placeholder="Nombre" onChange={e => setForm({...form, name: e.target.value})} />
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <input type="number" placeholder="Stock" required className="w-full bg-slate-100 p-4 rounded-2xl font-bold" onChange={e => setForm({...form, stock: parseInt(e.target.value)})} />
-                                        <input type="number" placeholder="Precio" required className="w-full bg-slate-100 p-4 rounded-2xl font-bold" onChange={e => setForm({...form, price: parseFloat(e.target.value)})} />
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+                            <div className="bg-white w-full max-w-xl rounded-[3rem] p-12 shadow-2xl border border-slate-100 scale-in">
+                                <div className="flex justify-between items-center mb-10"><h2 className="text-3xl font-black tracking-tighter">Añadir Registro</h2><button onClick={() => setIsModalOpen(false)} className="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full"><Icon name="x" /></button></div>
+                                <form className="space-y-6" onSubmit={e => { e.preventDefault(); setProducts([...products, {...form, id: Date.now()}]); setIsModalOpen(false); }}>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Nombre</label>
+                                        <input required className="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl outline-none font-bold text-lg focus:ring-2 ring-brand-500/20" placeholder="Ej. MacBook Pro M3" onChange={e => setForm({...form, name: e.target.value})} />
                                     </div>
-                                    <button className="w-full btn-main justify-center py-4 text-lg">GUARDAR EN ALMACÉN</button>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Cantidad</label>
+                                            <input type="number" placeholder="0" required className="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl font-bold focus:ring-2 ring-brand-500/20" onChange={e => setForm({...form, stock: parseInt(e.target.value)})} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Precio</label>
+                                            <input type="number" placeholder="0.00" required className="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl font-bold focus:ring-2 ring-brand-500/20" onChange={e => setForm({...form, price: parseFloat(e.target.value)})} />
+                                        </div>
+                                    </div>
+                                    <button className="w-full btn-action justify-center py-5 text-xl tracking-tighter">CONFIRMAR REGISTRO</button>
                                 </form>
                             </div>
                         </div>
