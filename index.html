@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Pro | Vue Edition</title>
+    <meta name="description" content="Sistema de gestión de inventario moderno potenciado por Vue.js">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body :class="{'light-theme': !isDark, 'dark-theme': isDark}">
+    <div id="app" v-cloak>
+        <div class="app-container">
+            <!-- Sidebar -->
+            <aside class="sidebar" :class="{'mobile-active': isMobileMenuOpen}">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <i data-lucide="package" class="logo-icon"></i>
+                        <span>Inventario<span>Pro</span></span>
+                    </div>
+                </div>
+                <nav class="sidebar-nav">
+                    <button class="nav-item" :class="{active: activeTab === 'dashboard'}" @click="activeTab = 'dashboard'; isMobileMenuOpen = false">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="nav-item" :class="{active: activeTab === 'inventory'}" @click="activeTab = 'inventory'; isMobileMenuOpen = false">
+                        <i data-lucide="boxes"></i>
+                        <span>Inventario</span>
+                        <span v-if="lowStockProducts.length > 0" class="badge-dot"></span>
+                    </button>
+                    <button class="nav-item" :class="{active: activeTab === 'categories'}" @click="activeTab = 'categories'; isMobileMenuOpen = false">
+                        <i data-lucide="layers"></i>
+                        <span>Categorías</span>
+                    </button>
+                </nav>
+                <div class="sidebar-footer">
+                    <button class="theme-toggle" @click="isDark = !isDark">
+                        <i v-if="isDark" data-lucide="sun"></i>
+                        <i v-else data-lucide="moon"></i>
+                        <span>{{ isDark ? 'Modo Claro' : 'Modo Oscuro' }}</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <header class="top-bar">
+                    <button class="mobile-menu-btn" @click="isMobileMenuOpen = !isMobileMenuOpen">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="search-wrapper">
+                        <i data-lucide="search"></i>
+                        <input type="text" v-model="searchQuery" placeholder="Buscar productos...">
+                    </div>
+                    <div class="top-bar-actions">
+                        <button class="btn btn-secondary btn-icon" @click="exportCSV" title="Exportar CSV">
+                            <i data-lucide="download"></i>
+                        </button>
+                        <button class="btn btn-primary" @click="openModal()">
+                            <i data-lucide="plus"></i>
+                            <span>Nuevo Producto</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="content-wrapper">
+                    <!-- Dashboard Tab -->
+                    <transition name="fade" mode="out-in">
+                        <section v-if="activeTab === 'dashboard'" key="dashboard">
+                            <h1 class="page-title">Resumen de Almacén</h1>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-info">
+                                        <span class="stat-label">Total Productos</span>
+                                        <h2 class="stat-value">{{ totalStock }}</h2>
+                                    </div>
+                                    <div class="stat-icon icon-blue"><i data-lucide="box"></i></div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-info">
+                                        <span class="stat-label">Stock Bajo</span>
+                                        <h2 class="stat-value">{{ lowStockProducts.length }}</h2>
+                                    </div>
+                                    <div class="stat-icon icon-red"><i data-lucide="alert-triangle"></i></div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-info">
+                                        <span class="stat-label">Valor Total</span>
+                                        <h2 class="stat-value">${{ formattedTotalValue }}</h2>
+                                    </div>
+                                    <div class="stat-icon icon-green"><i data-lucide="dollar-sign"></i></div>
+                                </div>
+                            </div>
+
+                            <div class="recent-section">
+                                <div class="section-header">
+                                    <h3>Productos Recientes</h3>
+                                    <button class="btn btn-text" @click="activeTab = 'inventory'">Ver todos</button>
+                                </div>
+                                <div class="table-container glass">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Categoría</th>
+                                                <th>Stock</th>
+                                                <th>Precio</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="p in recentProducts" :key="p.id">
+                                                <td>
+                                                    <div class="product-cell">
+                                                        <img :src="p.image" class="product-img" :alt="p.name">
+                                                        <span>{{ p.name }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>{{ p.category }}</td>
+                                                <td>{{ p.stock }}</td>
+                                                <td>${{ p.price.toFixed(2) }}</td>
+                                                <td>
+                                                    <span class="badge" :class="p.stock <= p.minStock ? 'badge-danger' : 'badge-success'">
+                                                        {{ p.stock <= p.minStock ? 'Bajo Stock' : 'En Stock' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Inventory Tab -->
+                        <section v-else-if="activeTab === 'inventory'" key="inventory">
+                            <div class="section-header">
+                                <h1 class="page-title">Inventario Completo</h1>
+                            </div>
+                            <div class="filters-bar glass">
+                                <div class="filter-group">
+                                    <label>Categoría:</label>
+                                    <select v-model="filterCategory">
+                                        <option value="all">Todas</option>
+                                        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>Ordenar por:</label>
+                                    <select v-model="sortBy">
+                                        <option value="name-asc">Nombre (A-Z)</option>
+                                        <option value="name-desc">Nombre (Z-A)</option>
+                                        <option value="stock-low">Stock Bajo</option>
+                                        <option value="stock-high">Stock Alto</option>
+                                        <option value="price-high">Precio más alto</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-container glass">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Imagen</th>
+                                            <th>Nombre</th>
+                                            <th>Categoría</th>
+                                            <th>Stock</th>
+                                            <th>Precio</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="p in filteredProducts" :key="p.id">
+                                            <td><img :src="p.image" class="product-img" :alt="p.name"></td>
+                                            <td><strong>{{ p.name }}</strong></td>
+                                            <td><span class="badge badge-info">{{ p.category }}</span></td>
+                                            <td>
+                                                <span :class="{'text-danger font-bold': p.stock <= p.minStock}">
+                                                    {{ p.stock }} uds
+                                                </span>
+                                            </td>
+                                            <td>${{ p.price.toFixed(2) }}</td>
+                                            <td>
+                                                <div class="actions">
+                                                    <button @click="editProduct(p)" class="btn-icon"><i data-lucide="edit-2"></i></button>
+                                                    <button @click="deleteProduct(p.id)" class="btn-icon text-danger"><i data-lucide="trash-2"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- Categories Tab -->
+                        <section v-else-if="activeTab === 'categories'" key="categories">
+                            <h1 class="page-title">Análisis por Categoría</h1>
+                            <div class="categories-grid">
+                                <div v-for="cat in categoryStats" :key="cat.name" class="category-card glass">
+                                    <div class="category-icon">
+                                        <i data-lucide="layers"></i>
+                                    </div>
+                                    <h3 class="category-name">{{ cat.name }}</h3>
+                                    <div class="category-details">
+                                        <div class="cat-stat">
+                                            <span>Productos:</span>
+                                            <strong>{{ cat.count }}</strong>
+                                        </div>
+                                        <div class="cat-stat">
+                                            <span>Stock Total:</span>
+                                            <strong>{{ cat.totalStock }}</strong>
+                                        </div>
+                                        <div class="cat-stat">
+                                            <span>Valor:</span>
+                                            <strong>${{ cat.totalValue.toLocaleString() }}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="category-footer">
+                                        <button class="btn btn-text" @click="filterCategory = cat.name; activeTab = 'inventory'">Ver Productos</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </transition>
+                </div>
+            </main>
+        </div>
+
+        <!-- Product Modal -->
+        <div class="modal" :class="{active: isModalOpen}">
+            <div class="modal-content glass">
+                <div class="modal-header">
+                    <h2>{{ editingId ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+                    <button class="close-modal" @click="closeModal">&times;</button>
+                </div>
+                <form @submit.prevent="saveProduct">
+                    <div class="form-group">
+                        <label>Nombre del Producto</label>
+                        <input type="text" v-model="form.name" required placeholder="Ej. Monitor Pro 27">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select v-model="form.category" required>
+                                <option v-for="cat in defaultCategories" :key="cat" :value="cat">{{ cat }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Stock</label>
+                            <input type="number" v-model.number="form.stock" required min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Precio Unitario</label>
+                            <input type="number" v-model.number="form.price" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock Mínimo</label>
+                            <input type="number" v-model.number="form.minStock" required min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>URL de Imagen</label>
+                        <input type="url" v-model="form.image" placeholder="https://...">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" @click="closeModal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

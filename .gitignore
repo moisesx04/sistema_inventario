@@ -1,0 +1,14 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Gemini/Antigravity metadata
+.gemini/
+brain/
+knowledge/
+walkthrough.md
+task.md
+implementation_plan.md
+
+# Vercel
+.vercel
