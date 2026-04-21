@@ -25,14 +25,10 @@ export default function DashboardLayout({
         </div>
         
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <div 
-              role="button"
-              tabIndex={0}
-              className="flex items-center justify-center size-9 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors"
-            >
-              <Menu className="h-6 w-6 text-slate-600" />
-            </div>
+          <SheetTrigger
+            className="flex md:hidden items-center justify-center size-9 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors outline-none border-none bg-transparent"
+          >
+            <Menu className="h-6 w-6 text-slate-600" />
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-60 bg-slate-900 border-none">
             <SheetHeader className="sr-only">
