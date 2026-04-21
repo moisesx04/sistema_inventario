@@ -53,6 +53,21 @@ export default function SettingsPage() {
     },
   });
 
+  const syncMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/settings/sync", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al sincronizar");
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handlePurge = (e: React.FormEvent) => {
     e.preventDefault();
     purgeMutation.mutate(purgePassword);
@@ -90,10 +105,24 @@ export default function SettingsPage() {
             </div>
             <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
               <p className="text-xs text-slate-500 mb-1">Entorno</p>
-              <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 border-none text-xs">
-                DEMO LOCAL
+              <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100 border-none text-xs">
+                {process.env.NODE_ENV === "production" ? "PRODUCCIÓN CLOUD" : "DEMO LOCAL"}
               </Badge>
             </div>
+          </div>
+
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+            <div>
+              <p className="text-sm font-bold text-indigo-900">¿Primer despliegue en Vercel?</p>
+              <p className="text-xs text-indigo-700/70 mt-1">Sincroniza el esquema para habilitar la creación de productos.</p>
+            </div>
+            <Button 
+              onClick={() => syncMutation.mutate()} 
+              disabled={syncMutation.isPending}
+              className="bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto"
+            >
+              {syncMutation.isPending ? "Sincronizando..." : "Sincronizar Cloud DB"}
+            </Button>
           </div>
         </CardContent>
       </Card>
