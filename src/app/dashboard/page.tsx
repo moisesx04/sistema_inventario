@@ -7,24 +7,37 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { type Product } from "@/lib/store";
+import { useInventoryStore, type Product } from "@/lib/store";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
-  const { data: products, isLoading } = useQuery({
+  const { isLocalMode, localProducts } = useInventoryStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const { data: cloudProducts, isLoading: isLoadingCloud } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const response = await fetch("/api/products");
       if (!response.ok) return [];
       return response.json();
     },
+    enabled: mounted && !isLocalMode, // Only fetch cloud if not in local mode
   });
 
-  const totalProducts = products?.length || 0;
-  const totalValue = products?.reduce((sum: number, p: Product) => sum + (p.price * p.stock), 0) || 0;
-  const lowStock = products?.filter((p: Product) => p.stock > 0 && p.stock < 10).length || 0;
-  const outOfStock = products?.filter((p: Product) => p.stock === 0).length || 0;
+  // Decide which products to show
+  const products = isLocalMode ? localProducts : (cloudProducts || []);
+  const isLoading = !mounted || (isLoadingCloud && !isLocalMode);
+
+  const totalProducts = products.length;
+  const totalValue = products.reduce((sum: number, p: Product) => sum + (p.price * p.stock), 0);
+  const lowStock = products.filter((p: Product) => p.stock > 0 && p.stock < 10).length;
+  const outOfStock = products.filter((p: Product) => p.stock === 0).length;
   
-  const recentProducts = products ? [...products].slice(0, 5) : [];
+  const recentProducts = [...products].slice(0, 5);
 
   if (isLoading) {
     return (
@@ -49,12 +62,20 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
-          <div className="size-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-            <Activity className="h-5 w-5 text-emerald-600 animate-pulse" />
+          <div className={cn(
+            "size-10 rounded-xl flex items-center justify-center",
+            isLocalMode ? "bg-amber-500/10" : "bg-emerald-500/10"
+          )}>
+            <Activity className={cn(
+              "h-5 w-5",
+              isLocalMode ? "text-amber-600" : "text-emerald-600 animate-pulse"
+            )} />
           </div>
           <div className="pr-4">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sistema</p>
-            <p className="text-xs font-black text-slate-900">SINCRONIZADO</p>
+            <p className="text-xs font-black text-slate-900">
+              {isLocalMode ? "MODO NAVEGADOR" : "MODO NUBE"}
+            </p>
           </div>
         </div>
       </div>
