@@ -28,8 +28,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(products, {
       headers: { "Cache-Control": "no-store" },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("[GET /api/products]", error);
+    
+    if (error.message?.includes("Can't reach database server") || error.message?.includes("ENETUNREACH")) {
+      return NextResponse.json(
+        { error: "La base de datos en la nube es inalcanzable. Por favor, verifica la configuración en Vercel o usa el Modo Local (Navegador)." },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Error al obtener los productos" },
       { status: 500 }

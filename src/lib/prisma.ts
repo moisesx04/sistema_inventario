@@ -17,3 +17,13 @@ export const prisma =
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+export const getSafeHostname = () => {
+  if (!connectionString) return "No configurado";
+  try {
+    const url = new URL(connectionString);
+    return url.hostname;
+  } catch {
+    return "URL Inválida";
+  }
+};
