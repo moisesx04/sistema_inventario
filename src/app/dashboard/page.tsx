@@ -16,6 +16,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setMounted(true);
+    // Log access when the dashboard loads
+    fetch("/api/logs/access", { method: "POST" }).catch(console.error);
   }, []);
 
   const { data: cloudProducts, isLoading: isLoadingCloud } = useQuery({
