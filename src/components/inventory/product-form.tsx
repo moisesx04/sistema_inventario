@@ -25,7 +25,8 @@ import {
   Barcode,
   Save,
   X,
-  Plus
+  Plus,
+  Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
