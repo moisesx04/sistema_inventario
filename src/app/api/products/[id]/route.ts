@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { createAuditLog } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
@@ -22,6 +23,8 @@ export async function PATCH(
       },
     });
 
+    await createAuditLog("UPDATE_PRODUCT", `Editó: ${product.name} (SKU: ${product.sku})`);
+
     return NextResponse.json(product);
   } catch (error) {
     console.error("[PATCH /api/products/:id]", error);
@@ -38,7 +41,13 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await prisma.product.delete({ where: { id } });
+    const product = await prisma.product.findUnique({ where: { id } });
+    
+    if (product) {
+      await prisma.product.delete({ where: { id } });
+      await createAuditLog("DELETE_PRODUCT", `Eliminó: ${product.name} (SKU: ${product.sku})`);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[DELETE /api/products/:id]", error);

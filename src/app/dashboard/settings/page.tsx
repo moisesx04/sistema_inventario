@@ -73,6 +73,17 @@ export default function SettingsPage() {
     refetchInterval: 10000,
   });
 
+  const { data: logs, isLoading: isLoadingLogs } = useQuery({
+    queryKey: ["audit-logs"],
+    queryFn: async () => {
+      const response = await fetch("/api/logs");
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: isMounted,
+    refetchInterval: 30000,
+  });
+
   const purgeMutation = useMutation({
     mutationFn: async (password: string) => {
       const res = await fetch("/api/settings/purge", {
@@ -304,6 +315,82 @@ export default function SettingsPage() {
                   <RefreshCcw className={cn("size-3 mr-2", syncMutation.isPending && "animate-spin")} />
                   {syncMutation.isPending ? "Sincronizando..." : "Sincronizar Esquema"}
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Activity Log Section */}
+          <Card className="border-0 shadow-2xl shadow-slate-200/40 bg-white overflow-hidden group">
+            <CardHeader className="p-8 pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-xl bg-slate-900 flex items-center justify-center">
+                    <Activity className="h-5 w-5 text-white" />
+                  </div>
+                  <CardTitle className="text-xl font-black italic tracking-tight">Registro de Actividad</CardTitle>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => queryClient.invalidateQueries({ queryKey: ["audit-logs"] })}
+                  className="text-slate-400 hover:text-slate-600"
+                >
+                  <RefreshCcw className="size-4 mr-2" />
+                  Actualizar
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-y border-slate-100">
+                      <th className="p-4 pl-8 text-[10px] font-black uppercase tracking-widest text-slate-400">Acción</th>
+                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Dispositivo / IP</th>
+                      <th className="p-4 pr-8 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Fecha</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {isLoadingLogs ? (
+                      <tr>
+                        <td colSpan={3} className="p-8 text-center text-slate-400 animate-pulse">Cargando registros...</td>
+                      </tr>
+                    ) : !logs || logs.length === 0 ? (
+                      <tr>
+                        <td colSpan={3} className="p-8 text-center text-slate-400">No hay actividad registrada aún.</td>
+                      </tr>
+                    ) : (
+                      logs.map((log: any) => (
+                        <tr key={log.id} className="hover:bg-slate-50/50 transition-colors group/row">
+                          <td className="p-4 pl-8">
+                            <p className="text-sm font-black text-slate-900 tracking-tight">{log.action}</p>
+                            <p className="text-[10px] text-slate-500 font-medium">{log.details}</p>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <Globe className="size-3 text-slate-300" />
+                              <p className="text-xs font-bold text-slate-600">{log.ip}</p>
+                            </div>
+                            <p className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[200px]">{log.device}</p>
+                          </td>
+                          <td className="p-4 pr-8 text-right">
+                            <p className="text-xs font-bold text-slate-900">
+                              {new Date(log.timestamp).toLocaleDateString()}
+                            </p>
+                            <p className="text-[10px] text-slate-400 font-medium">
+                              {new Date(log.timestamp).toLocaleTimeString()}
+                            </p>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div className="p-4 bg-slate-50/50 text-center border-t border-slate-100">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Mostrando los últimos 50 eventos de seguridad
+                </p>
               </div>
             </CardContent>
           </Card>

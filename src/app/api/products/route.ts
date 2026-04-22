@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { createAuditLog } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -75,6 +76,8 @@ export async function POST(request: NextRequest) {
         sku: sku.trim().toUpperCase(),
       },
     });
+
+    await createAuditLog("CREATE_PRODUCT", `Producto: ${product.name} (SKU: ${product.sku})`);
 
     return NextResponse.json(product, { status: 201 });
   } catch (error: unknown) {

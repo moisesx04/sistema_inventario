@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { createAuditLog } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 const PURGE_PASSWORD = "admin2024"; // change before going to production
@@ -16,6 +17,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { count } = await prisma.product.deleteMany({});
+
+    await createAuditLog("PURGE_DATABASE", `Vació el inventario cloud. (${count} productos eliminados)`);
 
     return NextResponse.json({
       success: true,

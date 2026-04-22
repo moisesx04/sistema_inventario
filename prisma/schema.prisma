@@ -20,3 +20,12 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   // e.g., "LOGIN", "CREATE_PRODUCT", "PURGE"
+  details   String?  // Optional extra info
+  ip        String?
+  device    String?  // Device brand/model/os
+  timestamp DateTime @default(now())
+}
