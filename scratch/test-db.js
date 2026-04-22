@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const connectionString = "postgresql://postgres:Garusito95%40@aws-0-us-east-1.pooler.supabase.com:6543/postgres";
+const connectionString = process.env.DATABASE_URL;
 console.log('Testing connection to:', connectionString.replace(/:([^:@]+)@/, ':****@'));
 
 const pool = new Pool({

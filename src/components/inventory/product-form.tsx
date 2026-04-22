@@ -32,6 +32,9 @@ export function ProductForm() {
     setIsAddModalOpen,
     editingProduct,
     setEditingProduct,
+    isLocalMode,
+    addLocalProduct,
+    updateLocalProduct
   } = useInventoryStore();
   const queryClient = useQueryClient();
 
@@ -76,7 +79,22 @@ export function ProductForm() {
 
   const mutation = useMutation({
     mutationFn: async (data: ProductFormData) => {
-      const url = isEditing
+      const payload = {
+        ...data,
+        price: parseFloat(data.price),
+        stock: parseInt(data.stock, 10),
+      };
+
+      if (isLocalMode) {
+        if (isEditing && editingProduct) {
+          updateLocalProduct(editingProduct.id, payload);
+        } else {
+          addLocalProduct(payload);
+        }
+        return { success: true };
+      }
+
+      const url = isEditing && editingProduct
         ? `/api/products/${editingProduct.id}`
         : "/api/products";
       const method = isEditing ? "PATCH" : "POST";
@@ -84,7 +102,7 @@ export function ProductForm() {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       const json = await response.json();
@@ -92,7 +110,9 @@ export function ProductForm() {
       return json;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      if (!isLocalMode) {
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+      }
       toast.success(
         isEditing ? "Producto actualizado correctamente" : "Producto creado exitosamente"
       );
@@ -107,9 +127,16 @@ export function ProductForm() {
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeDialog()}>
       <DialogContent className="w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">
-            {isEditing ? "Editar Producto" : "Nuevo Producto"}
-          </DialogTitle>
+          <div className="flex items-center gap-2">
+            <DialogTitle className="text-xl">
+              {isEditing ? "Editar Producto" : "Nuevo Producto"}
+            </DialogTitle>
+            {isLocalMode && (
+              <span className="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter">
+                Modo Local
+              </span>
+            )}
+          </div>
           <DialogDescription>
             {isEditing
               ? "Modifica los datos del producto y guarda los cambios."
