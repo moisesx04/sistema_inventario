@@ -7,12 +7,17 @@ export async function POST() {
     // Es útil para inicializar bases de datos en Vercel sin acceso a terminal
     console.log("Iniciando sincronización de base de datos...");
     
+    const connectionString = 
+      process.env.STORAGE_PRISMA_URL || 
+      process.env.STORAGE_URL || 
+      process.env.POSTGRES_PRISMA_URL || 
+      process.env.DATABASE_URL;
+
     const output = execSync("npx prisma db push --accept-data-loss", {
       encoding: "utf-8",
       env: {
         ...process.env,
-        // Forzamos el uso de la variable de Vercel si existe
-        DATABASE_URL: process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL,
+        DATABASE_URL: connectionString,
       },
     });
 
