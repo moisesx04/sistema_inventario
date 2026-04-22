@@ -34,7 +34,8 @@ import {
   Globe,
   RefreshCcw,
   ShieldAlert,
-  Activity
+  Activity,
+  Package
 } from "lucide-react";
 import { useInventoryStore, type Product } from "@/lib/store";
 import { cn } from "@/lib/utils";
