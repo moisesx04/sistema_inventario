@@ -10,7 +10,15 @@ const connectionString =
   process.env.POSTGRES_PRISMA_URL || 
   process.env.DATABASE_URL;
 
-const pool = new Pool({ connectionString });
+if (!connectionString) {
+  console.error("❌ ERROR: No se encontró ninguna variable de conexión a la base de datos (DATABASE_URL, POSTGRES_PRISMA_URL o STORAGE_URL). Verifica la configuración en Vercel.");
+}
+
+const pool = new Pool({ 
+  connectionString: connectionString || "postgresql://missing_connection_string@localhost:5432/missing",
+  connectionTimeoutMillis: 5000 
+});
+
 const adapter = new PrismaPg(pool);
 
 export const prisma =
@@ -23,7 +31,7 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export const getSafeHostname = () => {
-  if (!connectionString) return "No configurado";
+  if (!connectionString) return "No configurado (Variables faltantes)";
   try {
     const url = new URL(connectionString);
     return url.hostname;
