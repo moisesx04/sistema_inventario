@@ -147,7 +147,7 @@ export function ProductForm() {
                 </div>
                 <div>
                   <DialogTitle className="text-2xl font-black tracking-tight text-white">
-                    {isEditing ? "Editar Producto" : "Nuevo Producto"}
+                    {isEditing ? "✨ Editar Detalles" : "✨ Registro de Producto Premium"}
                   </DialogTitle>
                   <div className="flex items-center gap-2 mt-1">
                     <DialogDescription className="text-indigo-100 font-medium text-xs">
