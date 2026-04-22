@@ -138,51 +138,43 @@ export function ProductForm() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeDialog()}>
-      <DialogContent className="w-[95vw] sm:max-w-[550px] p-0 overflow-y-auto max-h-[95vh] border-none shadow-2xl bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl">
-        <div className="bg-slate-950 p-5 sm:p-8 text-white border-b border-white/5 sticky top-0 z-20">
+      <DialogContent className="w-[95vw] sm:max-w-[450px] p-0 overflow-y-auto max-h-[92vh] border-none shadow-2xl bg-white rounded-3xl">
+        {/* Header - Simple & Clean */}
+        <div className="p-6 border-b border-slate-100 sticky top-0 bg-white/80 backdrop-blur-md z-20">
           <DialogHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="size-10 sm:size-12 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10">
-                  {isEditing ? <Save className="size-5 sm:size-6 text-indigo-400" /> : <Plus className="size-5 sm:size-6 text-indigo-400" />}
-                </div>
-                <div>
-                  <DialogTitle className="text-xl sm:text-2xl font-black tracking-tight text-white">
-                    {isEditing ? "Editar Detalles" : "Registro de Producto"}
-                  </DialogTitle>
-                  <div className="flex items-center gap-2 mt-1">
-                    <DialogDescription className="text-indigo-100 font-medium text-xs">
-                      Gestión de inventario {isLocalMode ? "(Offline)" : "(Cloud)"}
-                    </DialogDescription>
-                    {isLocalMode && (
-                      <span className="bg-amber-400 text-amber-950 text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider">
-                        Local
-                      </span>
-                    )}
-                  </div>
-                </div>
+            <div className="flex flex-col gap-1">
+              <DialogTitle className="text-xl font-bold text-slate-900 tracking-tight">
+                {isEditing ? "Editar Producto" : "Nuevo Producto"}
+              </DialogTitle>
+              <div className="flex items-center gap-2">
+                <DialogDescription className="text-slate-500 font-medium text-xs">
+                  {isLocalMode ? "Almacenamiento Local" : "Sincronizado con la Nube"}
+                </DialogDescription>
+                {isLocalMode && (
+                  <span className="bg-indigo-50 text-indigo-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    Local
+                  </span>
+                )}
               </div>
             </div>
           </DialogHeader>
         </div>
 
-        <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="p-5 sm:p-8 space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+        <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="p-6 space-y-6 pb-24">
+          <div className="space-y-5">
             {/* Nombre */}
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                 Nombre del Producto
               </Label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                  <Package className="size-4" />
-                </div>
+              <div className="relative">
                 <Input
                   id="name"
-                  className="pl-10 h-12 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all font-bold text-slate-900"
+                  className="h-12 px-4 border-slate-200 bg-white focus:border-indigo-600 focus:ring-0 transition-all font-semibold text-slate-900 rounded-xl"
                   placeholder="Ej. Laptop Dell XPS 15"
                   {...register("name", { required: "El nombre es requerido" })}
                 />
+                <Package className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
               </div>
               {errors.name && (
                 <p className="text-[10px] font-bold text-rose-500 ml-1">{errors.name.message}</p>
@@ -191,20 +183,18 @@ export function ProductForm() {
 
             {/* SKU */}
             <div className="space-y-2">
-              <Label htmlFor="sku" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+              <Label htmlFor="sku" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                 Código SKU
               </Label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                  <Barcode className="size-4" />
-                </div>
+              <div className="relative">
                 <Input
                   id="sku"
                   disabled={isEditing}
-                  className="pl-10 h-12 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all font-bold text-slate-900"
+                  className="h-12 px-4 border-slate-200 bg-white focus:border-indigo-600 focus:ring-0 transition-all font-semibold text-slate-900 rounded-xl disabled:bg-slate-50 disabled:text-slate-400"
                   placeholder="LAP-001"
                   {...register("sku", { required: "El SKU es requerido" })}
                 />
+                <Barcode className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
               </div>
               {errors.sku && (
                 <p className="text-[10px] font-bold text-rose-500 ml-1">{errors.sku.message}</p>
@@ -213,120 +203,105 @@ export function ProductForm() {
 
             {/* Categoría */}
             <div className="space-y-2">
-              <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+              <Label htmlFor="category" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                 Categoría
               </Label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                  <Tag className="size-4" />
-                </div>
+              <div className="relative">
                 <Input
                   id="category"
-                  className="pl-10 h-12 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all font-bold text-slate-900"
+                  className="h-12 px-4 border-slate-200 bg-white focus:border-indigo-600 focus:ring-0 transition-all font-semibold text-slate-900 rounded-xl"
                   placeholder="Electrónica"
                   {...register("category")}
                 />
+                <Tag className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
               </div>
             </div>
 
-            {/* Precio */}
-            <div className="space-y-2">
-              <Label htmlFor="price" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                Precio Unitario
-              </Label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                  <DollarSign className="size-4" />
+            {/* Precio y Stock en una fila solo en escritorio, vertical en móvil */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="price" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                  Precio ($)
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    className="h-12 px-4 border-slate-200 bg-white focus:border-indigo-600 focus:ring-0 transition-all font-bold text-slate-900 rounded-xl"
+                    placeholder="0.00"
+                    {...register("price", {
+                      required: "Requerido",
+                      min: { value: 0, message: "No negativo" },
+                    })}
+                  />
+                  <DollarSign className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                 </div>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  className="pl-10 h-12 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all font-black text-slate-900"
-                  placeholder="0.00"
-                  {...register("price", {
-                    required: "Requerido",
-                    min: { value: 0, message: "No negativo" },
-                  })}
-                />
               </div>
-              {errors.price && (
-                <p className="text-[10px] font-bold text-rose-500 ml-1">{errors.price.message}</p>
-              )}
-            </div>
 
-            {/* Stock */}
-            <div className="space-y-2">
-              <Label htmlFor="stock" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                Stock Inicial
-              </Label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                  <Layers className="size-4" />
+              <div className="space-y-2">
+                <Label htmlFor="stock" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                  Stock
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="stock"
+                    type="number"
+                    className="h-12 px-4 border-slate-200 bg-white focus:border-indigo-600 focus:ring-0 transition-all font-bold text-slate-900 rounded-xl"
+                    placeholder="0"
+                    {...register("stock", {
+                      required: "Requerido",
+                      min: { value: 0, message: "No negativo" },
+                    })}
+                  />
+                  <Layers className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-slate-300" />
                 </div>
-                <Input
-                  id="stock"
-                  type="number"
-                  className="pl-10 h-12 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all font-black text-slate-900"
-                  placeholder="0"
-                  {...register("stock", {
-                    required: "Requerido",
-                    min: { value: 0, message: "No negativo" },
-                  })}
-                />
               </div>
-              {errors.stock && (
-                <p className="text-[10px] font-bold text-rose-500 ml-1">{errors.stock.message}</p>
-              )}
             </div>
 
             {/* Descripción */}
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                Información Adicional
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                Descripción
               </Label>
-              <div className="relative group">
-                <div className="absolute left-3 top-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                  <FileText className="size-4" />
-                </div>
+              <div className="relative">
                 <Input
                   id="description"
-                  className="pl-10 h-24 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium text-slate-900 align-top pt-3"
-                  placeholder="Agrega detalles relevantes del producto..."
+                  className="h-20 px-4 border-slate-200 bg-white focus:border-indigo-600 focus:ring-0 transition-all font-medium text-slate-900 rounded-xl pt-3"
+                  placeholder="Detalles del producto..."
                   {...register("description")}
                 />
+                <FileText className="absolute right-4 top-4 size-4 text-slate-300" />
               </div>
             </div>
           </div>
-
-          <div className="flex items-center gap-3 pt-2">
-            <Button 
-              type="button" 
-              variant="ghost" 
-              onClick={closeDialog}
-              className="flex-1 h-12 font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl"
-            >
-              <X className="size-4 mr-2" />
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              disabled={mutation.isPending}
-              className="flex-[2] h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50"
-            >
-              {mutation.isPending ? (
-                <Activity className="size-4 animate-spin mr-2" />
-              ) : (
-                <Save className="size-4 mr-2" />
-              )}
-              {mutation.isPending
-                ? "Procesando..."
-                : isEditing
-                ? "Guardar Cambios"
-                : "Crear Producto"}
-            </Button>
-          </div>
         </form>
+
+        {/* Footer Actions - Sticky at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-100 flex items-center gap-3 z-30">
+          <Button 
+            type="button" 
+            variant="ghost" 
+            onClick={closeDialog}
+            className="flex-1 h-12 font-bold text-slate-400 hover:text-slate-600"
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            form="product-form-element"
+            onClick={handleSubmit((d) => mutation.mutate(d))}
+            disabled={mutation.isPending}
+            className="flex-[2] h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-95 disabled:opacity-50"
+          >
+            {mutation.isPending ? (
+              <Activity className="size-4 animate-spin mr-2" />
+            ) : (
+              <Save className="size-4 mr-2" />
+            )}
+            {mutation.isPending ? "Guardando..." : (isEditing ? "Guardar" : "Crear Producto")}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
