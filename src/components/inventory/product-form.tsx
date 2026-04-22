@@ -139,16 +139,16 @@ export function ProductForm() {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeDialog()}>
       <DialogContent className="w-[95vw] sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl bg-white/95 backdrop-blur-xl">
-        <div className="bg-gradient-to-r from-indigo-600 to-violet-700 p-6 text-white">
+        <div className="bg-slate-950 p-6 text-white border-b border-white/5">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                  {isEditing ? <Save className="size-5" /> : <Plus className="size-5" />}
+                <div className="size-10 rounded-xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10">
+                  {isEditing ? <Save className="size-5 text-indigo-400" /> : <Plus className="size-5 text-indigo-400" />}
                 </div>
                 <div>
                   <DialogTitle className="text-2xl font-black tracking-tight text-white">
-                    {isEditing ? "✨ Editar Detalles" : "✨ Registro de Producto Premium"}
+                    {isEditing ? "Editar Detalles" : "Registro de Producto"}
                   </DialogTitle>
                   <div className="flex items-center gap-2 mt-1">
                     <DialogDescription className="text-indigo-100 font-medium text-xs">
