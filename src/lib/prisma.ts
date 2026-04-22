@@ -4,7 +4,11 @@ import { Pool } from "pg";
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-const connectionString = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
+const connectionString = 
+  process.env.STORAGE_PRISMA_URL || 
+  process.env.STORAGE_URL || 
+  process.env.POSTGRES_PRISMA_URL || 
+  process.env.DATABASE_URL;
 
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
